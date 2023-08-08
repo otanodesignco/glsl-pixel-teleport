@@ -1,7 +1,7 @@
 import { useFrame } from "@react-three/fiber";
 import { useControls } from "leva";
 import { useRef } from "react";
-import { Color, DoubleSide, MeshStandardMaterial, Vector3 } from "three";
+import { Color, MeshStandardMaterial, Vector3 } from "three";
 import CSM from 'three-custom-shader-material'
 
 const originalMaterial = new MeshStandardMaterial({ 
@@ -157,11 +157,11 @@ export const Experience = () =>
 {
 
   // controls
-  const { Size, Progress, Width, Start } = useControls(
+  const { Size, Progress, Width, effectColor } = useControls(
     {
       Size: 
       {
-        value: 1,
+        value: 60,
         min: 1,
         max: 150,
         step: 0.001
@@ -173,14 +173,25 @@ export const Experience = () =>
         max: 3,
         step: 0.001
       },
+      Width:
+      {
+        value: 8,
+        min: 1,
+        max: 20,
+        step: 0.001
+      },
+      effectColor:
+      {
+        value: '#0082B2'
+      }
     }
   )
 
   const uniforms = useRef(
     {
-      uNoiseSize: { value: 40 },
+      uNoiseSize: { value: 60 },
       uProgress: { value: 1 },
-      uDissolveColor: { value: new Color('#0082B2').multiplyScalar(50)},
+      uDissolveColor: { value: new Color('#0082B2').multiplyScalar(15)},
       uDissolveDirection: { value: new Vector3( 0, 1, 0 ) },
       uDissolveWidth: { value: 8 },
     }
@@ -193,30 +204,7 @@ export const Experience = () =>
     uniforms.current.uNoiseSize.value = Size
     uniforms.current.uProgress.value = Progress
     uniforms.current.uDissolveWidth.value = Width
-
-    switch( Start )
-    {
-      case 'Top':
-        uniforms.current.uDissolveDirection.value = directions.top
-      break
-
-      case 'Bottom':
-        uniforms.current.uDissolveDirection.value = directions.bottom
-      break
-
-      case 'Left':
-        uniforms.current.uDissolveDirection.value = directions.left
-      break
-
-      case 'Right':
-        uniforms.current.uDissolveDirection.value = directions.right
-      break
-
-      default:
-        uniforms.current.uDissolveDirection.value = directions.top
-      break
-    }
-
+    uniforms.current.uDissolveColor.value = new Color( effectColor ).multiplyScalar( 15 )
 
   })
 
